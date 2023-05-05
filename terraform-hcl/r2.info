@@ -1,0 +1,105 @@
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+no service config
+!
+hostname R2
+!
+boot-start-marker
+boot-end-marker
+!
+!
+vrf definition MGMT
+ !
+ address-family ipv4
+ exit-address-family
+!
+no logging console
+!
+no aaa new-model
+!
+!
+!
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+ip domain name demo.clus
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+username admin privilege 15 password 0 clus2023
+!
+redundancy
+!
+interface Loopback0
+ description LOOPBACK_INTERFACE
+ ip address 2.2.2.2 255.255.255.255
+!
+interface GigabitEthernet0/0
+ description MGMT-INTERFACE_DO_NOT_MODIFY
+ vrf forwarding MGMT
+ no ip address dhcp
+ ip address 10.10.20.172 255.255.255.0
+ duplex auto
+ speed auto
+ media-type rj45
+ no shutdown
+!
+interface GigabitEthernet0/1
+ description INTERFACE_TO_R1
+ ip address 172.16.12.2 255.255.255.0
+ duplex auto
+ speed auto
+ media-type rj45
+ no shutdown
+!
+interface GigabitEthernet0/2
+ description INTERFACE_TO_R3
+ ip address 172.16.23.2 255.255.255.0
+ duplex auto
+ speed auto
+ media-type rj45
+ no shutdown
+!
+router ospf 100
+ router-id 2.2.2.2
+ passive-interface default
+ no passive-interface GigabitEthernet0/1
+ no passive-interface GigabitEthernet0/2
+ network 2.2.2.2 0.0.0.0 area 0
+ network 172.16.12.2 0.0.0.0 area 0
+ network 172.16.23.2 0.0.0.0 area 0
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route vrf MGMT 0.0.0.0 0.0.0.0 10.10.20.254
+ip ssh version 2
+!
+ipv6 ioam timestamp
+!
+!
+!
+control-plane
+!
+line con 0
+ exec-timeout 0 0
+line aux 0
+line vty 0 4
+ login local
+ transport input ssh
+line vty 5 15
+ login local
+ transport input ssh
+!
+no scheduler allocate
+!
+crypto key gen rsa exportable gen mod 1024
+!
+end
