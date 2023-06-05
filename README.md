@@ -22,7 +22,7 @@ However, at a base level, one should perform the following steps:
 - Establish some reachability from the SCM to the Atlantis server (port forwarding + DNS, ngrok, etc)
 - Establish a webhook mechanism from the SCM pointing to the URL of the Atlantis server
 - Ensure proper authorization (tokens, SSH keys, etc) for Atlantis to access the defined build repos
-- Start Atlantis
+- Start Atlantis (can use the included shell script and filling in the appropriate values within `vars.env` and sourcing appropriately)
 - Create PR in build repo
 - PROFIT!!! $$$
 
